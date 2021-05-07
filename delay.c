@@ -1,0 +1,25 @@
+#include "stm32f10x.h"
+
+static volatile uint32_t TimingDelay;
+
+void delay_us(volatile uint32_t nTime)
+{ 
+  TimingDelay = nTime;
+  
+ 
+
+  while(TimingDelay != 0);
+}
+
+/**
+  * @brief  Decrements the TimingDelay variable.
+  * @param  None
+  * @retval None
+  */
+void TimingDelay_Decrement(void)
+{
+  if (TimingDelay != 0x00)
+  { 
+    TimingDelay--;
+  }
+}
