@@ -1,7 +1,7 @@
 
 // 12x16 ru/en
 
-
+ 
 const unsigned char Font_12x16_Data[] =
 {
   // 0x00 - пустое знакоместо.

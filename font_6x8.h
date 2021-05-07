@@ -1,7 +1,7 @@
 #ifndef FONT_6X8_H
 #define FONT_6X8_H
 
-// ״נטפע 6x8 ru/en
+//  6x8 ru/en
 
 const unsigned char font_6x8_Data[] =
 {
