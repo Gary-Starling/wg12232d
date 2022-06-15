@@ -1,8 +1,6 @@
 #ifndef FONT_6X8_H
 #define FONT_6X8_H
-
-// Шрифт 6 на 8 пикселов.
-// Повторяет шрифт DOSApp-103 Microsoft Windows.
+ 
 
 const unsigned char font_6x8_Data[] =
 {
