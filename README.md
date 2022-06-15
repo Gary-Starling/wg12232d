@@ -1,2 +1,2 @@
 # wg12232d
-# driver for display
+# driver for display(need change abracadabra comments)
