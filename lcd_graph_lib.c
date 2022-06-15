@@ -197,7 +197,7 @@ void LCDG_SendData(uint8_t data, eCSnumer chip)
   strobe_off(chip);
   
   A0_RESET;  
-#ifdef __FREE_RTOS__       
+#ifdef __FREE_RTOS__        
   taskEXIT_CRITICAL();
 #endif
 }
