@@ -1,107 +1,62 @@
-#include "misc.h"
 #include "lcd_graph_lib.h"
-#include "stm32f10x.h"
-#include "delay.h"
-#include "board.h" 
+#include "main.h" 
 
 
 
 int main()
 { 
-  
-  stm32_init();        
-  LCDG_InitLcd();    
+  sys_config();
+  pins_init();        
+  LCDG_InitLcd();  
   LCDG_ClrAllDisp();    
-  
-   LCDG_SendString_x12(0,1, " WG12232D");  //step x and y one sign 12x16! 
-   delay_ms(1000);
-   LCDG_ClrAllDisp(); 
-   
-   int test = 0;
+
+  int test = 0;
    
   while(1)  
   {
-    LCDG_SendString(0,0,"Hello my friend");   //step x and y one sign 6x8!    
-    
-    printLcdLong(0,1, test++);
-    
+    LCDG_SendString(0,0,"Hello my friend", OFF);
+	LCDG_SendString(0, 1, "wg12232d" , OFF);
+	LCDG_SendString(6, 2, "bye" , OFF);
   }
 }
 
 
-void stm32_init(void)
+void pins_init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStructure;
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  
+  __HAL_RCC_GPIOC_CLK_ENABLE(); 
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE(); 
   
-  RCC_Configuration();
-  NVIC_SetPriority(SysTick_IRQn, 0x00);
-  SysTick_Config(800);
+  /* display */
+  HAL_GPIO_WritePin(GPIOB, A0_Pin|CS1_Pin|CS2_Pin|DB7_Pin|RW_Pin|POWER_DISP_PIN
+                    |DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin, GPIO_PIN_RESET);
   
-  /*
-  GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); 
-  */
-  /**/
-  /* pin on base vt commut led*/
-  GPIO_InitStructure.GPIO_Pin =  LED_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-  GPIO_Init(LED_PORT, &GPIO_InitStructure);
-  LED_OFF;
-  
-  GPIO_ResetBits(GPIOA,GPIO_Pin_0); 
-  GPIO_ResetBits(GPIOA,GPIO_Pin_7);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_11);
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_SetBits(GPIOA,GPIO_Pin_10);
-  
-  DISPLAY_OFF; 
-  LED_ON;     
-  
-  
-  data_port_clear(1);
-  GPIO_InitStructure.GPIO_Pin =  DB7_PIN | DB6_PIN | DB5_PIN | DB4_PIN | DB3_PIN | DB2_PIN | DB1_PIN | DB0_PIN | CS2_PIN | CS1_PIN | A0_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
-  
-  GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-  GPIO_InitStructure.GPIO_Pin = RW_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  
-  data_port_clear(1);
-  delay_us(100);
-  
+  GPIO_InitStruct.Pin = A0_Pin|CS1_Pin|CS2_Pin|DB7_Pin|RW_Pin|POWER_DISP_PIN|
+    DB0_Pin|DB1_Pin|DB2_Pin|DB3_Pin|DB4_Pin|DB5_Pin|DB6_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  /* display */
 }
 
 
 
 
-void RCC_Configuration(void)
+void sys_config(void)
 {
-  RCC_DeInit();
-  RCC->CR     |= RCC_CR_HSION;
-  while((RCC->CR & RCC_CR_HSIRDY)==0)
-    RCC->CFGR &= ~RCC_CFGR_SW;
-  RCC->CFGR |=  RCC_CFGR_SW_HSI;
-  
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOC, ENABLE);		
-  
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;   
+  RCC_OscInitStruct.PLL.PREDIV = RCC_PREDIV_DIV1;
+  HAL_RCC_OscConfig(&RCC_OscInitStruct);
 }
 
 
