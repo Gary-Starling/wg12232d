@@ -239,8 +239,8 @@ void LCDG_InitLcd(void)
 */
 void LCDG_FillAll(unsigned int x1, unsigned int x2, uint8_t data)
 {
-  unsigned int xPos = x1;
-  unsigned int realAdr = 0;
+  uint32_t xPos = x1;
+  uint32_t realAdr = 0;
   eCSnumer chip;
   
   while(xPos < x2)
@@ -282,8 +282,8 @@ void LCDG_FillAll(unsigned int x1, unsigned int x2, uint8_t data)
 */
 void LCDG_SendSymbol(uint8_t xPos, uint8_t yPos, char symbol, eInversion inv)
 {
-  uint8_t realAdr;
-  uint8_t realPage = PAGE0 + yPos;
+  uint32_t realAdr;
+  uint32_t realPage = PAGE0 + yPos;
   uint32_t  pointerFont = symbol*6;
   realAdr = PlaceArray[xPos];
   xPos = realAdr;
@@ -325,9 +325,9 @@ void LCDG_SendSymbol(uint8_t xPos, uint8_t yPos, char symbol, eInversion inv)
 */
 void LCDG_SendSymbol_x12(uint8_t xPos, uint8_t yPos, char symbol,  eInversion inv)
 {
-  uint8_t realAdr2;
-  uint8_t realAdr;
-  uint8_t realPage = PAGE0 + yPos;
+  uint32_t realAdr2;
+  uint32_t realAdr;
+  uint32_t realPage = PAGE0 + yPos;
   uint32_t  pointerFont = symbol*24;
   realAdr = PlaceArray_x12[xPos];
   realAdr2 = PlaceArray_x12[xPos];
