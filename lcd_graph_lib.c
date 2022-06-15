@@ -212,7 +212,7 @@ void LCDG_InitLcd(void)
   DISPLAY_ON;                   //Включение дисплея(my custom board)
 #ifdef __FREE_RTOS__      
   osDelay(100);      
-#elif
+#else
   HAL_Delay(100);
 #endif  
   
@@ -328,7 +328,7 @@ void LCDG_SendSymbol_x12(uint8_t xPos, uint8_t yPos, char symbol,  eInversion in
   uint8_t realAdr2;
   uint8_t realAdr;
   uint8_t realPage = PAGE0 + yPos;
-  uint8_t  pointerFont = symbol*24;
+  uint32_t  pointerFont = symbol*24;
   realAdr = PlaceArray_x12[xPos];
   realAdr2 = PlaceArray_x12[xPos];
   xPos = realAdr;
